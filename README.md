@@ -31,6 +31,17 @@ EOF
 
 mkdir whereami-grpc-backend/variant
 
+# for fun, playing with bypassing metadata IP with Istio sidecar
+cat <<EOF > whereami-grpc-backend/variant/deployment-bypass.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whereami-grpc
+  annotations:
+    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32"
+EOF
+
+
 cat <<EOF > whereami-grpc-backend/variant/cm-flag.yaml 
 apiVersion: v1
 kind: ConfigMap
@@ -64,6 +75,9 @@ patches:
 - path: service-type.yaml
   target:
     kind: Service
+- path: deployment-bypass.yaml
+  target:
+    kind: Deployment
 EOF
 
 kubectl --context=${CLUSTER_1_CTX} apply -k whereami-grpc-backend/variant
@@ -78,6 +92,16 @@ resources:
 EOF
 
 mkdir whereami-grpc-frontend/variant
+
+# for fun, playing with bypassing metadata IP with Istio sidecar
+cat <<EOF > whereami-grpc-frontend/variant/deployment-bypass.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whereami-grpc
+  annotations:
+    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32"
+EOF
 
 cat <<EOF > whereami-grpc-frontend/variant/cm-flag.yaml 
 apiVersion: v1
@@ -112,6 +136,9 @@ patches:
 - path: service-type.yaml
   target:
     kind: Service
+- path: deployment-bypass.yaml
+  target:
+    kind: Deployment
 EOF
 
 kubectl --context=${CLUSTER_1_CTX} apply -k whereami-grpc-frontend/variant
@@ -151,4 +178,11 @@ kubectl --context=${CLUSTER_2_CTX} apply -f whereami-grpc-frontend-vs.yaml
 # had to restart deloyments since the configmap for whereami-grpc-frontend was misconfigured
 kubectl rollout restart deployment whereami-grpc-frontend -n whereami-grpc-frontend --context=$CLUSTER_1_CTX
 kubectl rollout restart deployment whereami-grpc-frontend -n whereami-grpc-frontend --context=$CLUSTER_2_CTX
+
+# and trying backend too
+kubectl rollout restart deployment whereami-grpc-backend -n whereami-grpc-backend --context=$CLUSTER_1_CTX
+kubectl rollout restart deployment whereami-grpc-backend -n whereami-grpc-backend --context=$CLUSTER_2_CTX
+
+# testing endpoint 
+grpcurl frontend.endpoints.gateway-multicluster-01.cloud.goog:443 whereami.Whereami.GetPayload | jq . # replace with your project name
 ```

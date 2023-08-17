@@ -1,0 +1,6 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whereami-grpc
+  annotations:
+    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32"
