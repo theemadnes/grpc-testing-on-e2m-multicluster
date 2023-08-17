@@ -86,7 +86,7 @@ metadata:
   name: whereami-grpc
 data:
   BACKEND_ENABLED: "True"
-  BACKEND_SERVICE:        "http://whereami-grpc-backend.whereami-grpc-backend.svc.cluster.local"
+  BACKEND_SERVICE:        "whereami-grpc-backend.whereami-grpc-backend.svc.cluster.local:9090"
 EOF
 
 cat <<EOF > whereami-grpc-frontend/variant/service-type.yaml 
@@ -143,4 +143,12 @@ kubectl delete vs whereami-vs -n frontend --context=$CLUSTER_2_CTX
 
 kubectl --context=${CLUSTER_1_CTX} apply -f whereami-grpc-frontend-vs.yaml
 kubectl --context=${CLUSTER_2_CTX} apply -f whereami-grpc-frontend-vs.yaml
+```
+
+### scratch stuff
+
+```
+# had to restart deloyments since the configmap for whereami-grpc-frontend was misconfigured
+kubectl rollout restart deployment whereami-grpc-frontend -n whereami-grpc-frontend --context=$CLUSTER_1_CTX
+kubectl rollout restart deployment whereami-grpc-frontend -n whereami-grpc-frontend --context=$CLUSTER_2_CTX
 ```
