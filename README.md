@@ -116,4 +116,31 @@ EOF
 
 kubectl --context=${CLUSTER_1_CTX} apply -k whereami-grpc-frontend/variant
 kubectl --context=${CLUSTER_2_CTX} apply -k whereami-grpc-frontend/variant
+
+# create virtualService to route to gRPC stuff
+cat << EOF > whereami-grpc-frontend-vs.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: whereami-grpc-vs
+  namespace: whereami-grpc-frontend
+spec:
+  gateways:
+  - asm-ingress/asm-ingressgateway
+  hosts:
+  - 'frontend.endpoints.gateway-multicluster-01.cloud.goog' # replace with your project name 
+  http:
+  - route:
+    - destination:
+        host: whereami-grpc-frontend
+        port:
+          number: 9090
+EOF
+
+# had to clean up old VSs
+kubectl delete vs whereami-vs -n frontend --context=$CLUSTER_1_CTX
+kubectl delete vs whereami-vs -n frontend --context=$CLUSTER_2_CTX
+
+kubectl --context=${CLUSTER_1_CTX} apply -f whereami-grpc-frontend-vs.yaml
+kubectl --context=${CLUSTER_2_CTX} apply -f whereami-grpc-frontend-vs.yaml
 ```
