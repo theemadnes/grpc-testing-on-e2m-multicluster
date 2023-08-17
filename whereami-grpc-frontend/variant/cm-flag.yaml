@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: whereami-grpc
+data:
+  BACKEND_ENABLED: "True"
+  BACKEND_SERVICE:        "http://whereami-grpc-backend.whereami-grpc-backend.svc.cluster.local"
