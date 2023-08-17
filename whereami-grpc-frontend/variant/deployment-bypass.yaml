@@ -3,4 +3,4 @@ kind: Deployment
 metadata:
   name: whereami-grpc
   annotations:
-    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32"
+    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32,199.36.153.8/30,199.36.153.4/30"

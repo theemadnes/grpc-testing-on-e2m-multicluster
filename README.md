@@ -31,14 +31,14 @@ EOF
 
 mkdir whereami-grpc-backend/variant
 
-# for fun, playing with bypassing metadata IP with Istio sidecar
+# for fun, playing with bypassing metadata IP & PGA with Istio sidecar
 cat <<EOF > whereami-grpc-backend/variant/deployment-bypass.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whereami-grpc
   annotations:
-    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32"
+    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32,199.36.153.8/30,199.36.153.4/30"
 EOF
 
 
@@ -93,14 +93,14 @@ EOF
 
 mkdir whereami-grpc-frontend/variant
 
-# for fun, playing with bypassing metadata IP with Istio sidecar
+# for fun, playing with bypassing metadata IP & PGA with Istio sidecar
 cat <<EOF > whereami-grpc-frontend/variant/deployment-bypass.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whereami-grpc
   annotations:
-    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32"
+    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32,199.36.153.8/30,199.36.153.4/30"
 EOF
 
 cat <<EOF > whereami-grpc-frontend/variant/cm-flag.yaml 
