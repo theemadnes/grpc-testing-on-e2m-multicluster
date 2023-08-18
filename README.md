@@ -37,8 +37,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whereami-grpc
-  annotations:
-    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32,199.36.153.8/30,199.36.153.4/30"
+spec:
+  template:
+    metadata:
+      annotations: 
+        traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32,199.36.153.8/30,199.36.153.4/30"
 EOF
 
 
@@ -99,8 +102,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whereami-grpc
-  annotations:
-    traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32,199.36.153.8/30,199.36.153.4/30"
+spec:
+  template:
+    metadata:
+      annotations: 
+        traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.169.254/32,199.36.153.8/30,199.36.153.4/30"
 EOF
 
 cat <<EOF > whereami-grpc-frontend/variant/cm-flag.yaml 
